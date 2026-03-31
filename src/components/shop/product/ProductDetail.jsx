@@ -1,15 +1,26 @@
-export default function ProductDetail() {
+export default function ProductDetail({ product }) {
   return (
-    <div>
-      <h1 className="text-2xl font-bold">iPhone 15</h1>
+    <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 p-6 bg-white shadow rounded-xl">
 
-      <p className="text-red-600 text-xl font-bold my-4">
-        20.000.000đ
-      </p>
+      <img
+        src={`/images/${product.image}`}
+        className="w-full h-100 rounded-lg"
+      />
 
-      <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg">
-        Mua ngay
-      </button>
+      <div>
+        <h2 className="text-3xl font-bold mb-4">
+          {product.name}
+        </h2>
+
+        <p className="text-red-500 text-2xl font-semibold mb-4">
+          {product.price.toLocaleString()}đ
+        </p>
+
+        <p className="text-gray-600">
+          Danh mục: {product.category}
+        </p>
+      </div>
+
     </div>
   );
 }

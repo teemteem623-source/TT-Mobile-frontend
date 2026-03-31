@@ -1,6 +1,6 @@
 export const adminMenu = [ 
-    { label: "Dashboard", href: "/admin" }, 
-    { label: "Products", href: "/admin/products" }, 
-    { label: "Categories", href: "/admin/categories" }, 
-    { label: "Orders", href: "/admin/orders" }, 
-]; 
+  { label: "Trang quản lí", href: "/admin" }, 
+  { label: "Quản lí sản phẩm", href: "/admin/products" }, 
+  { label: "Quản lí danh mục", href: "/admin/categories" }, 
+  { label: "Quản lí đơn hàng", href: "/admin/orders" }, 
+];

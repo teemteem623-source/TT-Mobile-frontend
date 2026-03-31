@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { validateProduct, isEmpty } from "@/utils/validators";
-import { createProduct } from "@/services/productService";
+import { getProductById, updateProduct, } from "@/services/productService";
 import CategorySelect from "@/components/common/CategorySelect";
 import BrandSelect from "@/components/common/BrandSelect";
 
-const CreateForm = (props) => {
+const EditForm = () => {
+  const { id } = useParams();
+
   const [formData, setFormData] = useState({
     product_name: "",
     alias: "",
@@ -26,11 +28,50 @@ const CreateForm = (props) => {
   });
 
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState("");
 
+  // load dữ liệu cũ
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-  // 🧠 handle change
+        const data = await getProductById(id);
+
+        setFormData({
+          product_name: data.product_name || "",
+          alias: data.alias || "",
+          cat_id: data.cat_id || "",
+          brand_id: data.brand_id || "",
+          detail: data.detail || "",
+          price: data.price || "",
+          sale_price: data.sale_price || "",
+          image: data.image || "",
+          launch_date: data.launch_date
+            ? data.launch_date.slice(0, 16)
+            : "",
+          tag: data.tag || "",
+          summary: data.summary || "",
+          status: data.status ?? 1,
+          trash: data.trash ?? 0,
+          view: data.view ?? 50,
+        });
+      } catch (e) {
+        setErrors({
+          message:
+            e?.response?.data?.error ||
+            "Lỗi tải dữ liệu",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  // handle change
   const handleChange = (e) => {
     const { name, value, type } = e.target;
     let newValue = value;
@@ -40,7 +81,8 @@ const CreateForm = (props) => {
       name === "cat_id" ||
       name === "brand_id" ||
       name === "status" ||
-      name === "trash"
+      name === "trash" ||
+      name === "view"
     ) {
       newValue = value === "" ? "" : Number(value);
     }
@@ -51,13 +93,12 @@ const CreateForm = (props) => {
     }));
   };
 
-  // 🧠 format date
   const formatDate = (date) => {
     if (!date) return "";
     return date.replace("T", " ") + ":00";
   };
 
-  // 🚀 submit
+  // submit update
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -74,35 +115,43 @@ const CreateForm = (props) => {
         launch_date: formatDate(formData.launch_date),
       };
 
-      console.log("DATA SUBMIT:", submitData);
+      await updateProduct(id, submitData);
 
-      let res = await createProduct(submitData);
-      console.log("RESPONSE:", res);
-
-      setSuccess("Tạo sản phẩm thành công 🎉");
+      setSuccess("Cập nhật sản phẩm thành công 🎉");
       setErrors({});
     } catch (e) {
       setErrors({
-        message: e?.response?.data?.error || "Lỗi server",
+        message:
+          e?.response?.data?.error ||
+          "Lỗi cập nhật",
       });
     } finally {
       setLoading(false);
     }
   };
 
+  if (loading) {
+    return (
+      <p className="text-center mt-10">
+        Đang tải dữ liệu...
+      </p>
+    );
+  }
+
   return (
-    <div className="max-w-3xl mx-auto p-8 bg-linear-to-r from-purple-50 via-white to-purple-50 shadow-2xl rounded-3xl  transition-all duration-300">
+    <div className="max-w-3xl mx-auto p-8 bg-linear-to-r from-purple-50 via-white to-purple-50 shadow-2xl rounded-3xl transition-all duration-300">
       <h2 className="text-3xl font-extrabold mb-6 text-center text-purple-600">
-        🚀 Tạo sản phẩm mới
+        ✏️ Cập nhật sản phẩm
       </h2>
 
       {success && (
-        <p className="text-green-600 flex items-center gap-2 mb-4 animate-fadeIn">
+        <p className="text-green-600 flex items-center gap-2 mb-4">
           🎉 {success}
         </p>
       )}
+
       {errors.message && (
-        <p className="text-red-600 flex items-center gap-2 mb-4 animate-fadeIn">
+        <p className="text-red-600 flex items-center gap-2 mb-4">
           ❌ {errors.message}
         </p>
       )}
@@ -111,107 +160,110 @@ const CreateForm = (props) => {
         {/* Tên + Alias */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="font-semibold mb-1 block">Tên sản phẩm:</label>
+            <label className="font-semibold mb-1 block">
+              Tên sản phẩm:
+            </label>
             <input
               name="product_name"
               value={formData.product_name}
               onChange={handleChange}
-              placeholder="Nhập tên sản phẩm..."
-              className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+              className="w-full p-3 border border-gray-300 rounded-xl"
             />
-            {errors.product_name && <p className="text-red-500">{errors.product_name}</p>}
           </div>
 
           <div>
-            <label className="font-semibold mb-1 block">Alias:</label>
+            <label className="font-semibold mb-1 block">
+              Alias:
+            </label>
             <input
               name="alias"
               value={formData.alias}
               onChange={handleChange}
-              placeholder="Ví dụ: san-pham-1"
-              className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+              className="w-full p-3 border border-gray-300 rounded-xl"
             />
-            {errors.alias && <p className="text-red-500">{errors.alias}</p>}
           </div>
         </div>
 
         {/* Danh mục + Thương hiệu */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="font-semibold mb-1 block">Danh mục:</label>
-            <div className="w-full border border-gray-300 rounded-xl p-2 focus-within:ring-2 focus-within:ring-purple-500 transition">
+            <label className="font-semibold mb-1 block">
+              Danh mục:
+            </label>
+            <div className="w-full border border-gray-300 rounded-xl p-2">
               <CategorySelect
                 name="cat_id"
                 value={formData.cat_id}
                 onChange={handleChange}
               />
             </div>
-            {errors.cat_id && <p className="text-red-500">{errors.cat_id} </p>}
           </div>
 
           <div>
-            <label className="font-semibold mb-1 block">Thương hiệu:</label>
-            <div className="w-full border border-gray-300 rounded-xl p-2 focus-within:ring-2 focus-within:ring-purple-500 transition">
+            <label className="font-semibold mb-1 block">
+              Thương hiệu:
+            </label>
+            <div className="w-full border border-gray-300 rounded-xl p-2">
               <BrandSelect
                 name="brand_id"
                 value={formData.brand_id}
                 onChange={handleChange}
               />
             </div>
-            {errors.brand_id && <p className="text-red-500">{errors.brand_id}</p>}
           </div>
         </div>
 
         {/* Giá + Giá sale */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="font-semibold mb-1 block">Giá:</label>
+            <label className="font-semibold mb-1 block">
+              Giá:
+            </label>
             <input
               type="number"
               name="price"
               value={formData.price}
               onChange={handleChange}
-              placeholder="0"
-              className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+              className="w-full p-3 border border-gray-300 rounded-xl"
             />
-            {errors.price && <p className="text-red-500">{errors.price}</p>}
           </div>
 
           <div>
-            <label className="font-semibold mb-1 block">Giá khuyến mãi:</label>
+            <label className="font-semibold mb-1 block">
+              Giá khuyến mãi:
+            </label>
             <input
               type="number"
               name="sale_price"
               value={formData.sale_price}
               onChange={handleChange}
-              placeholder="0"
-              className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+              className="w-full p-3 border border-gray-300 rounded-xl"
             />
-            {errors.sale_price && <p className="text-red-500">{errors.sale_price}</p>}
           </div>
         </div>
 
         {/* Ảnh */}
         <div>
-          <label className="font-semibold mb-1 block">Ảnh:</label>
+          <label className="font-semibold mb-1 block">
+            Ảnh:
+          </label>
           <input
             name="image"
             value={formData.image}
             onChange={handleChange}
-            placeholder="URL ảnh..."
-            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+            className="w-full p-3 border border-gray-300 rounded-xl"
           />
         </div>
 
         {/* Status + Trash + View */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="font-semibold mb-1 block">Status:</label>
+            <label>Status:</label>
             <select
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+              className="w-full p-3 border border-gray-300 rounded-xl"
             >
               <option value={1}>Hiển thị</option>
               <option value={0}>Ẩn</option>
@@ -219,12 +271,12 @@ const CreateForm = (props) => {
           </div>
 
           <div>
-            <label className="font-semibold mb-1 block">Trash:</label>
+            <label>Trash:</label>
             <select
               name="trash"
               value={formData.trash}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+              className="w-full p-3 border border-gray-300 rounded-xl"
             >
               <option value={0}>Không</option>
               <option value={1}>Có</option>
@@ -232,67 +284,63 @@ const CreateForm = (props) => {
           </div>
 
           <div>
-            <label className="font-semibold mb-1 block">View:</label>
+            <label>View:</label>
             <input
               type="number"
               name="view"
               value={formData.view}
               onChange={handleChange}
-              placeholder="50"
-              className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+              className="w-full p-3 border border-gray-300 rounded-xl"
             />
           </div>
         </div>
 
         {/* Ngày ra mắt */}
         <div>
-          <label className="font-semibold mb-1 block">Ngày ra mắt:</label>
+          <label>Ngày ra mắt:</label>
           <input
             type="datetime-local"
             name="launch_date"
             value={formData.launch_date}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+            className="w-full p-3 border border-gray-300 rounded-xl"
           />
-          {errors.launch_date && <p className="text-red-500">{errors.launch_date}</p>}
         </div>
 
         {/* Tag */}
         <div>
-          <label className="font-semibold mb-1 block">Tag:</label>
+          <label>Tag:</label>
           <input
             name="tag"
             value={formData.tag}
             onChange={handleChange}
-            placeholder="Ví dụ: laptop, gaming"
-            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+            className="w-full p-3 border border-gray-300 rounded-xl"
           />
-          {errors.tag && <p className="text-red-500">{errors.tag}</p>}
         </div>
 
         {/* Summary */}
         <div>
-          <label className="font-semibold mb-1 block">Tóm tắt:</label>
+          <label>Tóm tắt:</label>
           <textarea
             name="summary"
             value={formData.summary}
             onChange={handleChange}
-            placeholder="Nhập tóm tắt sản phẩm..."
-            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+            className="w-full p-3 border border-gray-300 rounded-xl"
           />
         </div>
 
-        {/* Button */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 rounded-2xl text-white font-semibold bg-linear-to-r from-purple-500 to-indigo-500 hover:from-indigo-500 hover:to-purple-500 shadow-lg hover:shadow-indigo-400 transition-all duration-300"
+          className="w-full py-3 rounded-2xl text-white font-semibold bg-linear-to-r from-purple-500 to-indigo-500"
         >
-          {loading ? "Đang xử lý..." : "Tạo sản phẩm"}
+          {loading
+            ? "Đang cập nhật..."
+            : "Cập nhật sản phẩm"}
         </button>
       </form>
     </div>
   );
 };
 
-export default CreateForm;
+export default EditForm;

@@ -1,31 +1,67 @@
 export default function Footer() {
     return (
-        <div className="bg-linear-to-r from-[#0f172a] via-[#1e293b] to-[#1e1b4b] text-gray-300">
+        <div className="text-gray-800">
 
-            <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-3 gap-8 text-sm">
+            {/* Wrapper căn giữa */}
+            <div className="max-w-full mx-auto px-6">
 
-                <div>
-                    <h3 className="font-semibold text-white mb-3">Shop</h3>
-                    <p className="hover:text-indigo-300 transition">Giới thiệu</p>
-                    <p className="hover:text-indigo-300 transition">Liên hệ</p>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-10 text-center md:text-left">
+
+                    {/* Giới thiệu */}
+                    <div>
+                        <h2 className="text-xl font-bold text-purple-700 mb-3">
+                            TT Shop
+                        </h2>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                            TT Shop là nơi mang đến những sản phẩm chất lượng,
+                            phù hợp với xu hướng hiện đại. Trải nghiệm mua sắm
+                            nhanh chóng, tiện lợi và đáng tin cậy.
+                        </p>
+                    </div>
+
+                    {/* Liên kết */}
+                    <div>
+                        <h3 className="font-semibold mb-3 text-purple-700">
+                            Liên kết
+                        </h3>
+                        <ul className="space-y-2 text-sm">
+                            <li>Sản phẩm</li>
+                            <li>Bài viết</li>
+                            <li>Liên hệ</li>
+                        </ul>
+                    </div>
+
+                    {/* Hỗ trợ */}
+                    <div>
+                        <h3 className="font-semibold mb-3 text-purple-700">
+                            Hỗ trợ
+                        </h3>
+                        <ul className="space-y-2 text-sm">
+                            <li>Chính sách bảo mật</li>
+                            <li>Điều khoản</li>
+                            <li>FAQ</li>
+                        </ul>
+                    </div>
+
+                    {/* Liên hệ */}
+                    <div>
+                        <h3 className="font-semibold mb-3 text-purple-700">
+                            Liên hệ
+                        </h3>
+                        <ul className="space-y-2 text-sm">
+                            <li>Email: support@ttshop.com</li>
+                            <li>Phone: 0123 456 789</li>
+                            <li>Địa chỉ: TP.HCM</li>
+                        </ul>
+                    </div>
+
                 </div>
 
-                <div>
-                    <h3 className="font-semibold text-white mb-3">Hỗ trợ</h3>
-                    <p className="hover:text-indigo-300 transition">Chính sách</p>
-                    <p className="hover:text-indigo-300 transition">Bảo hành</p>
+                {/* Bottom */}
+                <div className="mt-8 pt-4 border-t border-purple-200 text-center text-sm">
+                    © 2026 TT Xanh. All rights reserved.
                 </div>
 
-                <div>
-                    <h3 className="font-semibold text-white mb-3">Liên hệ</h3>
-                    <p className="text-gray-400">Email: demo@gmail.com</p>
-                </div>
-
-            </div>
-
-            {/* dòng dưới cùng */}
-            <div className="text-center text-xs text-gray-500 pb-4">
-                © 2026 Your Shop. All rights reserved.
             </div>
 
         </div>

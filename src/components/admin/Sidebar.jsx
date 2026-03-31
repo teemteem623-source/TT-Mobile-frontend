@@ -1,19 +1,34 @@
-export default function Sidebar() {
-  return (
-    <div className="h-full bg-slate-900 text-gray-300 flex flex-col p-4">
-      
-      <h2 className="text-xl font-bold text-white mb-6">
-        ADMIN
-      </h2>
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { adminMenu } from "@/data/adminMenu";
 
-      <nav className="flex flex-col gap-3">
-        <a className="hover:bg-slate-800 px-3 py-2 rounded">Dashboard</a>
-        <a className="hover:bg-slate-800 px-3 py-2 rounded">Products</a>
-        <a className="hover:bg-slate-800 px-3 py-2 rounded">Categories</a>
-        <a className="hover:bg-slate-800 px-3 py-2 rounded">Orders</a>
-        <a className="hover:bg-slate-800 px-3 py-2 rounded">Users</a>
+export default function Sidebar() {
+  const pathname = usePathname();
+
+  return (
+    <div className="bg-gray-900 text-white h-screen p-4 w-64 flex flex-col">
+      <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
+
+      <nav className="flex-1">
+        {adminMenu.map((item, index) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={index}
+              href={item.href}
+              className={`block py-3 px-4 rounded mb-2 transition ${isActive ? "bg-purple-700 text-white font-semibold" : "hover:bg-gray-700"
+                }`}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
       </nav>
 
+      <div className="mt-auto text-gray-400 text-sm">
+        © 2026 TT Shop
+      </div>
     </div>
   );
 }
