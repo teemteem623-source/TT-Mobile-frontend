@@ -1,13 +1,13 @@
 "use client";
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // 🔥 thêm cái này
+  const [loading, setLoading] = useState(true); 
 
-  // 👉 load user khi F5
+ 
   useEffect(() => {
     try {
       const savedUser = localStorage.getItem("user");
@@ -18,11 +18,10 @@ export const AuthProvider = ({ children }) => {
       console.error("Lỗi parse user:", err);
       localStorage.removeItem("user");
     } finally {
-      setLoading(false); // 🔥 QUAN TRỌNG
+      setLoading(false); 
     }
   }, []);
 
-  // 👉 sync nhiều tab (giữ lại ok 👍)
   useEffect(() => {
     const handleStorageChange = () => {
       const savedUser = localStorage.getItem("user");
@@ -46,3 +45,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext)

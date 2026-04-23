@@ -1,13 +1,13 @@
-import axiosInstance from "@/lib/axiosInstance"; 
- 
-// =============================== 
-// 1. Lấy danh sách sản phẩm  
-// =============================== 
-export const getProducts = async (params = {}) => { 
-  const res = await axiosInstance.get("/products", { 
-    params: params 
-  }); 
-  return res.data; 
+import axiosInstance from "@/lib/axiosInstance";
+
+// ===============================
+// 1. Lấy danh sách sản phẩm
+// ===============================
+export const getProducts = async (params = {}) => {
+  const res = await axiosInstance.get("/products", {
+    params,
+  });
+  return res.data;
 };
 
 // ===============================
@@ -26,7 +26,6 @@ export const createProduct = async (data) => {
   return res.data;
 };
 
-
 // ===============================
 // 4. Cập nhật sản phẩm
 // ===============================
@@ -34,7 +33,6 @@ export const updateProduct = async (id, data) => {
   const res = await axiosInstance.put(`/products/${id}`, data);
   return res.data;
 };
-
 
 // ===============================
 // 5. Xoá sản phẩm (soft delete)
@@ -44,35 +42,32 @@ export const deleteProduct = async (id) => {
   return res.data;
 };
 
-
 // ===============================
 // 6. Lấy sản phẩm mới
 // ===============================
-export const getNewProducts = async (limit = 10) => {
+export const getNewProducts = async (limit = 4) => {
   const res = await axiosInstance.get("/products/new", {
-    params: { limit }
+    params: { limit },
   });
   return res.data;
 };
-
 
 // ===============================
 // 7. Lấy sản phẩm bán chạy
 // ===============================
-export const getBestSellerProducts = async (limit = 5) => {
+export const getBestSellerProducts = async (limit = 4) => {
   const res = await axiosInstance.get("/products/bestseller", {
-    params: { limit }
+    params: { limit },
   });
   return res.data;
 };
 
-
 // ===============================
 // 8. Lấy sản phẩm liên quan
 // ===============================
-export const getRelatedProducts = async (id, limit = 5) => {
+export const getRelatedProducts = async (id, limit = 4) => {
   const res = await axiosInstance.get(`/products/related/${id}`, {
-    params: { limit }
+    params: { limit },
   });
   return res.data;
 };

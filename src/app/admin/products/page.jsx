@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import AdminTable from "@/components/admin/table/AdminTable";
 import { getProducts, deleteProduct } from "@/services/productService";
 import Pagination from "@/components/common/Pagination";
+import Link from "next/link";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState([]);
@@ -20,7 +21,6 @@ export default function AdminProductsPage() {
 
   const router = useRouter();
 
-  // ✅ Đưa columns ra ngoài
   const columns = [
     { key: "product_id", label: "ID" },
     { key: "product_name", label: "Tên sản phẩm" },
@@ -28,11 +28,11 @@ export default function AdminProductsPage() {
     { key: "sale_price", label: "Giá sale" },
   ];
 
-  // ✅ Đưa fetchData ra ngoài để tái sử dụng
+
   const fetchData = async () => {
     try {
       setLoading(true);
-      const data = await getProducts( params );
+      const data = await getProducts(params);
       setProducts(data.data);
       setTotalPages(data.totalPage);
       console.log(data);
@@ -70,7 +70,6 @@ export default function AdminProductsPage() {
 
       setSuccess("Xóa sản phẩm thành công!");
 
-      // ✅ gọi lại fetchData OK
       fetchData();
     } catch (error) {
       setErrors({
@@ -82,7 +81,18 @@ export default function AdminProductsPage() {
   };
 
   return (
+
     <div>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-xl font-semibold">Danh sách sản phẩm</h1>
+
+        <Link
+          href="/admin/products/create"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+        >
+          + Tạo sản phẩm
+        </Link>
+      </div>
       <div className="h-6">
         {loading && <p className="text-sm text-gray-500">Đang tải...</p>}
       </div>
@@ -95,11 +105,9 @@ export default function AdminProductsPage() {
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
-      <Pagination
-        totalPages={totalPages}
-        params={params}
-        onChangeParams={setParams}
-      />
+      <div className="flex justify-center">
+        <Pagination totalPages={totalPages} params={params} onChangeParams={setParams} />
+      </div>
     </div>
   );
 }

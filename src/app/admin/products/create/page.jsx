@@ -6,6 +6,23 @@ import { validateProduct, isEmpty } from "@/utils/validators";
 import { createProduct } from "@/services/productService";
 import CategorySelect from "@/components/common/CategorySelect";
 import BrandSelect from "@/components/common/BrandSelect";
+import UploadSingleFile from "@/components/admin/Upload";
+const slugify = (text) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/á|à|ả|ã|ạ|ă|ắ|ằ|ẵ|ặ|â|ấ|ầ|ẫ|ậ/g, "a")
+    .replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ễ|ệ/g, "e")
+    .replace(/í|ì|ỉ|ĩ|ị/g, "i")
+    .replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ỗ|ộ|ơ|ớ|ờ|ỡ|ợ/g, "o")
+    .replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ữ|ự/g, "u")
+    .replace(/ý|ỳ|ỷ|ỹ|ỵ/g, "y")
+    .replace(/đ/g, "d")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-");
+};
 
 const CreateForm = (props) => {
   const [formData, setFormData] = useState({
@@ -45,10 +62,18 @@ const CreateForm = (props) => {
       newValue = value === "" ? "" : Number(value);
     }
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: newValue,
-    }));
+    setFormData((prev) => {
+      const updated = {
+        ...prev,
+        [name]: newValue,
+      };
+
+      if (name === "product_name") {
+        updated.alias = slugify(newValue);
+      }
+
+      return updated;
+    });
   };
 
   // 🧠 format date
@@ -81,6 +106,7 @@ const CreateForm = (props) => {
 
       setSuccess("Tạo sản phẩm thành công 🎉");
       setErrors({});
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) {
       setErrors({
         message: e?.response?.data?.error || "Lỗi server",
@@ -90,8 +116,21 @@ const CreateForm = (props) => {
     }
   };
 
+  const handleUploadSuccess = (fileName) => {
+    setFormData((prev) => ({
+      ...prev,
+      image: fileName
+    }));
+  };
+
   return (
     <div className="max-w-3xl mx-auto p-8 bg-linear-to-r from-purple-50 via-white to-purple-50 shadow-2xl rounded-3xl  transition-all duration-300">
+      <button
+        onClick={() => (window.location.href = "/admin/products")}
+        className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-semibold"
+      >
+        ← Quay lại
+      </button>
       <h2 className="text-3xl font-extrabold mb-6 text-center text-purple-600">
         🚀 Tạo sản phẩm mới
       </h2>
@@ -124,12 +163,14 @@ const CreateForm = (props) => {
 
           <div>
             <label className="font-semibold mb-1 block">Alias:</label>
+
             <input
               name="alias"
               value={formData.alias}
               onChange={handleChange}
-              placeholder="Ví dụ: san-pham-1"
-              className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+              placeholder="Tự động tạo từ tên sản phẩm..."
+              disabled
+              className="w-full p-3 border border-gray-300 rounded-xl bg-gray-100 cursor-not-allowed"
             />
             {errors.alias && <p className="text-red-500">{errors.alias}</p>}
           </div>
@@ -202,6 +243,7 @@ const CreateForm = (props) => {
             className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
           />
         </div>
+        <UploadSingleFile onUploadSuccess={handleUploadSuccess} />
 
         {/* Status + Trash + View */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

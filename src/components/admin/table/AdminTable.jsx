@@ -58,7 +58,6 @@ export default function AdminTable({
 
     return (
         <div className="bg-white p-4 rounded-xl shadow-md border border-purple-200">
-            {/* 👇 thêm wrapper để tạo hiệu ứng hover cho table */}
             <div className="overflow-hidden rounded-lg">
                 <Table
                     columns={extendedColumns}

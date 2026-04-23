@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
     return (
         <div className="text-gray-800">
@@ -25,9 +27,23 @@ export default function Footer() {
                             Liên kết
                         </h3>
                         <ul className="space-y-2 text-sm">
-                            <li>Sản phẩm</li>
-                            <li>Bài viết</li>
-                            <li>Liên hệ</li>
+                            <ul className="space-y-2 text-sm">
+                                <li>
+                                    <Link href="/products" className="hover:text-purple-600 transition">
+                                        Sản phẩm
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/posts" className="hover:text-purple-600 transition">
+                                        Bài viết
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/contact" className="hover:text-purple-600 transition">
+                                        Liên hệ
+                                    </Link>
+                                </li>
+                            </ul>
                         </ul>
                     </div>
 

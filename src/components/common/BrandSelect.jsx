@@ -17,11 +17,7 @@ export default function BrandSelect({
     const fetchData = async () => {
       try {
         setLoading(true);
-
-        const data = await getBrands({
-          trash: 0
-        });
-
+        const data = await getBrands({ trash: 0 });
         setBrands(data);
       } catch (e) {
         setErrors({
@@ -35,9 +31,33 @@ export default function BrandSelect({
     fetchData();
   }, []);
 
+  const handleSelectChange = (e) => {
+    const selectedValue = e.target.value;
+
+    onChange({
+      target: {
+        name,
+        value: selectedValue === "" ? "" : Number(selectedValue),
+      },
+    });
+  };
+
   return (
     <div>
-      {errors.message ? ( <p>{errors.message}</p> ) : loading ? ( "loading brands" ) : ( <Select options={brands} valueKey="brand_id" labelKey="brand_name" /> )}
+      {errors.message ? (
+        <p>{errors.message}</p>
+      ) : loading ? (
+        "loading brands"
+      ) : (
+        <Select
+          name={name}
+          value={value || ""}
+          onChange={handleSelectChange}  
+          options={brands}
+          valueKey="brand_id"
+          labelKey="brand_name"
+        />
+      )}
     </div>
   );
 }

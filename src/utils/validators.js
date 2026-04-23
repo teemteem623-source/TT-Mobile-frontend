@@ -87,9 +87,9 @@ export const validateProduct = (data) => {
   }
 
   // image (chỉ check chuỗi)
-  // if (data.image && typeof data.image !== "string") {
-  //   errors.image = "Ảnh không hợp lệ";
-  // }
+  if (data.image && typeof data.image !== "string") {
+    errors.image = "Ảnh không hợp lệ";
+  }
 
   // cat_id
   if (!data.cat_id || !Number.isInteger(data.cat_id) || data.cat_id <= 0) {
